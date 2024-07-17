@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import "./login.css";
 import { Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../Actions/User";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  console.log(user);
 
   const loginHandler = (e) => {
     e.preventDefault();
