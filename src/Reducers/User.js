@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const userReducer = createSlice({
-  name: "User",
+  name: "user",
   initialState,
   reducers: {
     LoginRequest: (state) => {
@@ -75,5 +75,64 @@ const userReducer = createSlice({
   },
 });
 
+const initialPostState = {
+  posts: [],
+  loading: false,
+  error: null,
+};
+
+const postofFollowingReducer = createSlice({
+  name: "postOfFollowing",
+  initialState: initialPostState,
+  reducers: {
+    postofFollowingRequest: (state) => {
+      state.loading = true;
+    },
+    postofFollowingSuccess: (state, action) => {
+      state.loading = false;
+      state.posts = action.payload;
+    },
+    postofFollowingFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    ClearErrors: (state) => {
+      state.error = null;
+    },
+  },
+});
+
+const initialUserState = {
+  users: [],
+  loading: false,
+  error: null,
+};
+
+const allUsersReducer = createSlice({
+  name: "allUsers",
+  initialState: initialUserState,
+  reducers: {
+    allUsersRequest: (state) => {
+      state.loading = true;
+    },
+    allUsersSuccess: (state, action) => {
+      state.loading = false;
+      state.users = action.payload;
+    },
+    allUsersFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    ClearErrors: (state) => {
+      state.error = null;
+    },
+  },
+});
+
 export const userActions = userReducer.actions;
-export default userReducer.reducer;
+export const postActions = {
+  ...postofFollowingReducer.actions,
+  ...allUsersReducer.actions,
+};
+
+export { userReducer, postofFollowingReducer, allUsersReducer };
