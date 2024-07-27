@@ -10,10 +10,16 @@ import {
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addCommentonPost, likePosts } from "../../Actions/post";
-import { getFollowingPosts } from "../../Actions/User";
+import {
+  addCommentonPost,
+  deletePost,
+  likePosts,
+  updatePost,
+} from "../../Actions/post";
+import { getFollowingPosts, getmyPosts, loadUser } from "../../Actions/User";
 import User from "../User/User";
 import CommentCard from "../CommentCard/CommentCard";
+//import { getMyPosts } from "../../../../backend/controllers/user";
 
 const Post = ({
   postId,
@@ -31,25 +37,56 @@ const Post = ({
   const [likesUser, setLikesUser] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [commentToggle, setCommentToggle] = useState(false);
+  const [localLikes, setLocalLikes] = useState(likes); // Local likes state
+  const [captionValue, setCaptionValue] = useState(caption);
+  const [captionToggle, setCaptionToggle] = useState(false);
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
   const handleLike = async () => {
-    setLiked(!liked);
+    const newLikedStatus = !liked;
+    setLiked(newLikedStatus);
+
+    // Update local likes immediately
+    if (newLikedStatus) {
+      setLocalLikes([...localLikes, user]); // Add the user to the likes array
+    } else {
+      setLocalLikes(localLikes.filter((like) => like._id !== user._id)); // Remove the user from likes
+    }
+
     await dispatch(likePosts(postId));
+
+    // Fetch updated posts
     if (isAccount) {
-      console.log(`Bring my post`);
+      dispatch(getmyPosts());
     } else {
       dispatch(getFollowingPosts());
     }
-    dispatch(getFollowingPosts());
   };
 
   const addCommentHandler = (e) => {
     e.preventDefault();
     dispatch(addCommentonPost(postId, commentValue));
     setCommentValue(""); // Clear the comment input after submission
+
+    // Fetch updated posts
+    if (isAccount) {
+      dispatch(getmyPosts());
+    } else {
+      dispatch(getFollowingPosts());
+    }
+  };
+  const updateCaptionHandler = (e) => {
+    e.preventDefault();
+    dispatch(updatePost(captionValue, postId));
+    dispatch(getmyPosts());
+  };
+
+  const deletePostHandler = async () => {
+    await dispatch(deletePost(postId));
+    dispatch(getmyPosts());
+    dispatch(loadUser());
   };
 
   useEffect(() => {
@@ -60,11 +97,16 @@ const Post = ({
     });
   }, [likes, user._id]);
 
+  // Update local likes when prop changes
+  useEffect(() => {
+    setLocalLikes(likes);
+  }, [likes]);
+
   return (
     <div className="post">
       <div className="postHeader"></div>
       {isAccount ? (
-        <Button>
+        <Button onClick={() => setCaptionToggle(!captionToggle)}>
           <MoreVert />
         </Button>
       ) : null}
@@ -98,9 +140,9 @@ const Post = ({
           margin: "1vmax 2vmax",
         }}
         onClick={() => setLikesUser(!likesUser)}
-        disabled={likes.length === 0 ? true : false}
+        disabled={localLikes.length === 0 ? true : false} // Update to use localLikes
       >
-        <Typography>{likes.length} likes</Typography>
+        <Typography>{localLikes.length} likes</Typography>
       </button>
       <div className="postFooter">
         <Button onClick={handleLike}>
@@ -109,19 +151,25 @@ const Post = ({
         <Button onClick={() => setCommentToggle(!commentToggle)}>
           <ChatBubbleOutline />
         </Button>
-        <Button>{isDelete ? <DeleteOutline /> : null}</Button>
+        <Button onClick={deletePostHandler}>
+          {isDelete ? <DeleteOutline /> : null}
+        </Button>
       </div>
       <Dialog open={likesUser} onClose={() => setLikesUser(!likesUser)}>
         <div className="DialogBox">
           <Typography variant="h4">Liked By</Typography>
-          {likes.map((like) => (
-            <User
-              key={like._id}
-              userId={like._id}
-              name={like.name}
-              avatar={like.avatar}
-            />
-          ))}
+          {localLikes.map(
+            (
+              like // Update to use localLikes
+            ) => (
+              <User
+                key={like._id}
+                userId={like._id}
+                name={like.name}
+                avatar={like.avatar}
+              />
+            )
+          )}
         </div>
       </Dialog>
 
@@ -160,6 +208,28 @@ const Post = ({
           ) : (
             <Typography>No comments Yet</Typography>
           )}
+        </div>
+      </Dialog>
+      <Dialog
+        open={captionToggle}
+        onClose={() => setCaptionToggle(!captionToggle)}
+      >
+        <div className="DialogBox">
+          <Typography variant="h4">Update Caption</Typography>
+
+          <form className="commentForm" onSubmit={updateCaptionHandler}>
+            <input
+              type="text"
+              value={captionValue}
+              onChange={(e) => setCaptionValue(e.target.value)}
+              placeholder="Caption Here..."
+              required
+            />
+
+            <Button type="submit" variant="contained">
+              Update
+            </Button>
+          </form>
         </div>
       </Dialog>
     </div>

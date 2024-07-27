@@ -12,6 +12,8 @@ import { Provider as AlertProvider, positions, transitions } from "react-alert";
 //import { TimeToLeaveOutlined } from "@mui/icons-material";
 import AlertTemplate from "react-alert-template-basic";
 import Account from "./Components/Account/Account";
+import NewPost from "./Components/NewPost/NewPost";
+import Register from "./Components/Register/Register";
 
 const options = {
   position: positions.BOTTOM_CENTER,
@@ -37,6 +39,14 @@ function AppInner() {
           <Route
             path="/account"
             element={isAuthenticated ? <Account /> : <Login />}
+          />
+          <Route
+            path="/newpost"
+            element={isAuthenticated ? <NewPost /> : <Login />}
+          />
+          <Route
+            path="/register"
+            element={isAuthenticated ? <Register /> : <Account />}
           />
         </Routes>
       </Router>

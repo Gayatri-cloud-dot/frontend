@@ -65,6 +65,24 @@ const userReducer = createSlice({
       state.error = action.payload;
       state.isAuthenticated = false;
     },
+    LogOutUserRequest: (state) => {
+      console.log("LogOutUserRequest");
+      state.loading = true;
+      state.error = null;
+    },
+    LogOutUserSuccess: (state, action) => {
+      console.log("LogOutUserSuccess", action.payload);
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.error = null;
+    },
+    LogOutUserFailure: (state, action) => {
+      console.log("LogOutUserFailure", action.payload);
+      state.loading = false;
+      state.error = action.payload;
+      state.isAuthenticated = true;
+    },
     Logout: (state) => {
       console.log("Logout");
       state.isAuthenticated = false;

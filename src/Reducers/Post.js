@@ -48,6 +48,39 @@ const likeReducer = createSlice({
       state.loading = false;
       state.error = action.payload.message;
     },
+    newPostRequest: (state) => {
+      state.loading = true;
+    },
+    newPostSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    newPostFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    updateCaptionRequest: (state) => {
+      state.loading = true;
+    },
+    updateCaptionSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    updateCaptionFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    deleteProfileRequest: (state) => {
+      state.loading = true;
+    },
+    deleteProfileSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    deleteProfileFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     ClearErrors: (state) => {
       state.error = null;
     },

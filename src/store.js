@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
   user: userReducer.reducer,
   postofFollowing: postofFollowingReducer.reducer,
   allUsers: allUsersReducer.reducer,
-  Like: likeReducer.reducer,
+  like: likeReducer.reducer,
   myPosts: myPostsReducer.reducer,
 });
 
