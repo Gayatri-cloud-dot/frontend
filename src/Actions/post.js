@@ -119,7 +119,7 @@ export const updatePost = (caption, id) => async (dispatch) => {
     });
 
     const { data } = await axios.put(
-      `/api/v1/post/${id}`,
+      `/post/${id}`,
       {
         caption,
       },
@@ -147,7 +147,7 @@ export const deletePost = (id) => async (dispatch) => {
       type: "deletePostRequest",
     });
 
-    const { data } = await axios.delete(`/api/v1/post/${id}`);
+    const { data } = await axios.delete(`/post/${id}`);
     dispatch({
       type: "deletePostSuccess",
       payload: data.message,
